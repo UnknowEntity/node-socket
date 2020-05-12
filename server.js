@@ -6,7 +6,7 @@ var io = require("socket.io")(http);
 var client = require("socket.io-client");
 const axios = require("axios");
 
-const PORT = 3000 | 3001 | 3002 | 3003;
+const PORT = process.env.PORT;
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json());

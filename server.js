@@ -12,21 +12,14 @@ app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const socketListener = (socket) => {
-  socket.on("hello", () => {
-    console.log("hi");
-  });
-  return socket;
-};
-
 var socketNode = [];
-var socket = socketListener(client(`http://localhost:${PORT}`));
-socketNode.push(socket);
+// var socket = socketListener(client(`http://localhost:${PORT}`));
+// socketNode.push(socket);
 
 app.get("/nodes", (req, res) => {
   const { callback, port } = req.query;
   const node = `http://localhost:${port}`;
-  const socketClient = socketListener(client(node));
+  const socketClient = client.connect(node);
   socketNode.push(socketClient);
   if (callback === "true") {
     console.info(`Added node ${node} back`);
@@ -39,11 +32,13 @@ app.get("/nodes", (req, res) => {
 });
 
 app.get("/hello", (req, res) => {
-  socket.emit("hello");
+  io.emit("hello");
 });
 
 io.on("connection", (socket) => {
-  console.info(`Socket connected, ID: ${socket.id}`);
+  socket.on("hello", () => {
+    console.log("hi");
+  });
   socket.on("disconnect", () => {
     console.log(`Socket disconnected, ID: ${socket.id}`);
   });

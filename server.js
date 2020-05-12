@@ -32,7 +32,7 @@ app.get("/nodes", (req, res) => {
 });
 
 app.get("/hello", (req, res) => {
-  io.emit("hello");
+  io.sockets.emit("hello");
 });
 
 io.on("connection", (socket) => {

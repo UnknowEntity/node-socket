@@ -6,20 +6,20 @@ var io = require("socket.io")(http);
 var client = require("socket.io-client");
 const axios = require("axios");
 
-const PORT = 3001;
+const PORT = 3000;
 
 app.use(express.static(__dirname));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 var socketNode = [];
-var socket = client(`http://localhost:${PORT}`);
+var socket = socketListener(client(`http://localhost:${PORT}`));
 socketNode.push(socket);
 
 app.get("/nodes", (req, res) => {
   const { callback, port } = req.query;
   const node = `http://localhost:${port}`;
-  const socketClient = client(node);
+  const socketClient = socketListener(client(node));
   socketNode.push(socketClient);
   if (callback === "true") {
     console.info(`Added node ${node} back`);
@@ -35,15 +35,18 @@ app.get("/hello", (req, res) => {
   socket.emit("hello");
 });
 
+const socketListener = (socket) => {
+  socket.on("hello", () => {
+    console.log("hi");
+  });
+  return socket;
+};
+
 io.on("connection", (socket) => {
   console.info(`Socket connected, ID: ${socket.id}`);
   socket.on("disconnect", () => {
     console.log(`Socket disconnected, ID: ${socket.id}`);
   });
-});
-
-socket.on("hello", () => {
-  console.log("hi");
 });
 
 var server = http.listen(PORT, () => {

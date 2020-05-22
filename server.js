@@ -55,7 +55,7 @@ var socketListeners = (socket) => {
 
 var socketNodes = [];
 var nodeList = [];
-socketNode.push(socketListeners(client(`http://localhost:${PORT}`)));
+//socketNodes.push(socketListeners(client(`http://localhost:${PORT}`)));
 
 io.on("connection", (socket) => {
   console.info(`Socket connected, ID: ${socket.id}`);
